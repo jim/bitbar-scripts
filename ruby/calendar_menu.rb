@@ -14,32 +14,53 @@ ten_hours_since = Time.now + min(10 * 60)
 
 events_json = File.read("data/calendar.json")
 
-upcoming = JSON.parse(events_json)["items"].map { |event|
+events = JSON.parse(events_json)["items"].map { |event|
   link = event["location"] || extract_zoom_link(event["description"])
-  start_time = Time.iso8601(event["start"]["dateTime"])
-  {
-    summary: event["summary"],
-    link: link,
-    start_time: start_time,
-    human_start_time: start_time.strftime("%-I:%M%P").sub(":00", "")
-  }
-}.select { |event|
-  event[:start_time] >= ten_min_ago
+  if event["start"]["dateTime"]
+    start_time = Time.iso8601(event["start"]["dateTime"])
+    {
+      summary: event["summary"],
+      link: link,
+      start_time: start_time,
+      human_start_time: start_time.strftime("%-I:%M%P").sub(":00", ""),
+      all_day: false,
+    }
+  else
+    start_time = Date.iso8601(event["start"]["date"])
+    {
+      summary: event["summary"],
+      start_time: start_time,
+      human_start_time: "All dang day",
+      all_day: true,
+    }
+  end
 }
 
-next_event = upcoming.first
+next_event = events.select { |event|
+  event[:start_time] >= ten_min_ago
+}.first
 
+now = Time.now
 if next_event
   relative_time = time_ago_in_words(next_event[:start_time]).sub("minute", "min")
-  puts "#{next_event[:summary]} in #{relative_time} (#{next_event[:human_start_time]})"
+  time_msg = if next_event[:start_time] > now
+               "in #{relative_time}"
+             else
+               "#{relative_time} ago"
+             end
+
+  puts "#{next_event[:summary].truncate_words(5)} #{time_msg} (#{next_event[:human_start_time]})"
 else
   puts "Calendar"
 end
 
 puts "---"
 
-upcoming.each do |event|
+events.each do |event|
   print event[:summary]
   puts event[:link] ? "|href=" + direct_meeting_url(event[:link]) : ""
   puts event[:human_start_time] + "|size=12"
+  if event[:all_day]
+    puts "---"
+  end
 end
