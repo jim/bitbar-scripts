@@ -1,7 +1,7 @@
 GCAL_CLIENT_ID, GCAL_CLIENT_SECRET # Google API app credentials
 GCAL_REFRESH_TOKEN # Create using the Google API Console
 
-GH_TOKEN # GitHub API tolen
+GH_TOKEN # GitHub API token
 GH_REPO # orgname/reponame of the repo to show PRs from
 GH_TEAM # space-delimited list of GH usernames to filter PRs by
 
