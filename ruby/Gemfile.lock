@@ -49,6 +49,8 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
+    relative_time (1.1.0)
+      i18n
     thread_safe (0.3.6)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
@@ -64,6 +66,7 @@ DEPENDENCIES
   byebug
   graphql-client
   http
+  relative_time
 
 BUNDLED WITH
-   1.17.1
+   1.17.2

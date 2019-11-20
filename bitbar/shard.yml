@@ -1,0 +1,17 @@
+name: bitbar
+version: 0.1.0
+
+authors:
+  - Jim Benton <jim@autonomousmachine.com>
+
+targets:
+  bitbar:
+    main: src/bitbar.cr
+
+crystal: 0.31.1
+
+license: MIT
+
+dependencies:
+  atomic_write:
+    github: chris-huxtable/atomic_write.cr

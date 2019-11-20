@@ -1,4 +1,5 @@
 require "time"
+require "byebug"
 
 require "graphql/client"
 require "graphql/client/http"
@@ -15,8 +16,7 @@ module GitHub
   end
 
   # Load schema from disk if it exists
-  # TODO expire when older than 24 hours
-  if File.exist?(SCHEMA_PATH)
+  if File.exist?(SCHEMA_PATH) && File.mtime(SCHEMA_PATH) < Time.now - 1.0 # 24 hours ago
     Schema = GraphQL::Client.load_schema(SCHEMA_PATH)
   else
     Schema = GraphQL::Client.load_schema(HTTP)
@@ -27,8 +27,8 @@ module GitHub
 end
 
 PullRequestQuery = GitHub::Client.parse <<~GRAPHQL
-                                          query {
-                                            repository(owner: #{OWNER}, name:#{REPO}) {
+  query {
+    repository(owner: "#{OWNER}", name: "#{REPO}") {
       pullRequests(last: 100, states: OPEN, orderBy: {field: CREATED_AT, direction: DESC}) {
         nodes {
           title
@@ -50,7 +50,7 @@ PullRequestQuery = GitHub::Client.parse <<~GRAPHQL
       }
     }
   }
-                                        GRAPHQL
+GRAPHQL
 
 TEAM = ENV.fetch("GH_TEAM").split(" ")
 

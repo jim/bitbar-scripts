@@ -4,3 +4,7 @@ GCAL_REFRESH_TOKEN # Create using the Google API Console
 GH_TOKEN # GitHub API tolen
 GH_REPO # orgname/reponame of the repo to show PRs from
 GH_TEAM # space-delimited list of GH usernames to filter PRs by
+
+PIVOTAL_TOKEN # Pivotal API token
+PIVOTAL_PROJECTS # comma-delimited list of projects
+PIVOTAL_USER # username

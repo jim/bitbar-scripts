@@ -1,5 +1,6 @@
 #!/usr/local/bin/fish 
 
-source (dirname (status -f))/../bootstrap_ruby.fish
+set dir (dirname (status -f))
+cd $dir/..
 eval (direnv export fish ^ /dev/null)
-ruby ruby/calendar_data.rb
+bitbar/build/calendar_data
