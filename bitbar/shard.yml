@@ -15,3 +15,5 @@ license: MIT
 dependencies:
   atomic_write:
     github: chris-huxtable/atomic_write.cr
+  humanize_time:
+    github: mamantoha/humanize_time
