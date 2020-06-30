@@ -3,4 +3,4 @@
 set dir (dirname (status -f))
 cd $dir/..
 eval (direnv export fish ^ /dev/null)
-bitbar/build/calendar_menu
+bitbar/build/clocks
