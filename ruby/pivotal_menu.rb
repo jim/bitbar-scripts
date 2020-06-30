@@ -11,10 +11,18 @@ include ActionView::Helpers::DateHelper
 stories_json = File.read("data/pivotal.json")
 stories = JSON.parse(stories_json)
 
+if stories.is_a? Hash # should be an array it it was working
+  puts "Pivotal is down ☹️"
+  puts "---"
+  puts stories["error"]
+  exit
+end
+
 print "Pivotal"
 puts stories.size > 0 ? " (#{stories.size})" : ""
 
 puts "---"
+
 
 stories.each do |story|
   print story["name"]
