@@ -1,3 +1,3 @@
-source /usr/local/share/chruby/chruby.fish
-chruby 2.5.1
+source /usr/local/opt/asdf/asdf.fish
 cd (dirname (status -f))
+asdf local ruby 2.7.1
