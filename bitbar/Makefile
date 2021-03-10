@@ -15,7 +15,7 @@ build/jira_menu: src/jira_menu.cr
 build/clocks: src/clocks.cr
 	crystal build src/clocks.cr -o build/clocks
 
-build: build/calendar_data build/calendar_menu build/jira_data build/jira_menu build/clocks
+build: build/calendar_data build/calendar_menu build/clocks
 .PHONY: build
 
 clean:

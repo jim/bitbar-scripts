@@ -44,10 +44,12 @@ module Google
   end
 
   class Document
-    JSON.mapping(
-      title: String,
-      id: {type: String, key: "documentId"}
-    )
+    include JSON::Serializable
+
+    property title : String
+
+    @[JSON::Field(key: "documentId")]
+    property id : String
 
     def url
       "https://docs.google.com/document/d/#{id}/edit"

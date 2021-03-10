@@ -4,41 +4,50 @@ require "http/client"
 require "humanize_time"
 
 require "./google/docs"
+require "./zoom"
 
 class EventsPayload
-  JSON.mapping(
-    events: {type: Array(Event), key: "items"},
-  )
+  include JSON::Serializable
+
+  @[JSON::Field(key: "items")]
+  property events : Array(Event)
 end
 
 class EventTime
-  JSON.mapping(
-    date_time: {type: String?, key: "dateTime"},
-    date: String?
-  )
+  include JSON::Serializable
+
+  property date : String?
+
+  @[JSON::Field(key: "dateTime")]
+  property date_time : String?
 end
 
 class EntryPoint
-  JSON.mapping(
-    entry_point_type: {type: String, key: "entryPointType"},
-    uri: String,
-  )
+  include JSON::Serializable
+
+  property uri : String
+
+  @[JSON::Field(key: "entryPointType")]
+  property entry_point_type : String
 end
 
 class Event
-  JSON.mapping(
-    summary: String,
-    start: {type: EventTime},
-    location: String?,
-    description: String?,
-    conference_data: {type: ConferenceData?, key: "conferenceData"},
-  )
+  include JSON::Serializable
+
+  property summary : String
+  property start : EventTime
+  property location : String?
+  property description : String?
+
+  @[JSON::Field(key: "conferenceData")]
+  property conference_data : ConferenceData?
 end
 
 class ConferenceData
-  JSON.mapping(
-    entry_points: {type: Array(EntryPoint)?, key: "entryPoints"},
-  )
+  include JSON::Serializable
+
+  @[JSON::Field(key: "entryPoints")]
+  property entry_points : Array(EntryPoint)?
 end
 
 record CalendarEvent,
@@ -54,10 +63,7 @@ ten_min_since = Time.utc + 10.minutes
 ten_hours_since = Time.utc + 6.hours
 
 def extract_zoom_link(text)
-  return unless text
-
-  match = text.match %r{https://zoom\.us/j/\d+}
-  match[0] if match
+  Zoom.extract_url(text)
 end
 
 def extract_entry_point(conference_data)
@@ -77,26 +83,6 @@ def extract_doc(description)
   match = description.match %r{https://docs.google.com/document/d/([^\s/]+)}
   if match
     Google::Docs.new.cached_document(match[1]) if match
-  end
-end
-
-def direct_meeting_url(url)
-  return "" unless url
-
-  if url =~ /^zoom.us/
-    url.insert(0, "https://")
-  end
-
-  match = url.match %r{https://zoom\.us/j/(\d+)}
-  return "zoommtg://zoom.us/join?confno=#{match[1]}" if match
-
-  match = url.match %r{https://zoom\.us/my/\w+}
-  if match
-    response = HTTP::Client.get(match[0])
-    url = response.headers["Location"]
-    direct_meeting_url(url)
-  else
-    ""
   end
 end
 
@@ -120,7 +106,7 @@ rescue e
 end
 
 events = payload.events.map { |event|
-  link = event.location || extract_entry_point(event.conference_data) || extract_zoom_link(event.description)
+  link = extract_zoom_link(event.location) || extract_entry_point(event.conference_data) || extract_zoom_link(event.description)
   date = event.start.date
   date_time = event.start.date_time
   doc = extract_doc(event.description)
@@ -169,8 +155,8 @@ end
 puts "---"
 
 events.each do |event|
-  print event.summary
-  puts event.link ? "|href=" + direct_meeting_url(event.link) : ""
+  print event.summary.strip
+  puts event.link ? "|href=" + Zoom.direct_meeting_url(event.link) : ""
   puts event.human_start_time + "|size=12"
   if doc = event.doc
     puts doc.title + "|size=12 href=" + doc.url.to_s

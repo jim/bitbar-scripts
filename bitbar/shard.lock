@@ -1,18 +1,18 @@
-version: 1.0
+version: 2.0
 shards:
   atomic_write:
-    github: chris-huxtable/atomic_write.cr
+    git: https://github.com/chris-huxtable/atomic_write.cr.git
     version: 0.1.5
 
   humanize_time:
-    github: mamantoha/humanize_time
+    git: https://github.com/mamantoha/humanize_time.git
     version: 0.6.0
 
   i18n:
-    github: TechMagister/i18n.cr
+    git: https://github.com/TechMagister/i18n.cr.git
     version: 0.3.1
 
   i18n_plural_rules:
-    github: mamantoha/i18n_plural_rules
+    git: https://github.com/mamantoha/i18n_plural_rules.git
     version: 0.1.0
 
