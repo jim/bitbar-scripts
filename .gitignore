@@ -2,3 +2,5 @@
 .byebug_history
 tmp
 .DS_Store
+data
+bitbar/data
